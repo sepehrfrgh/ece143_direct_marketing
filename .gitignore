@@ -1,0 +1,9 @@
+# IDE artifacts
+.idea/
+
+# Python artifacts
+__pycache__/
+
+# Project files
+data/
+config.py
