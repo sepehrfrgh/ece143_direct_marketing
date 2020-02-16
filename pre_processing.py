@@ -10,8 +10,6 @@ class DfBankAdditional(pd.DataFrame):
 
     Pass a pandas.DataFrame to the constructor to get started
     """
-    pdays_mapping = {999: np.NaN}
-
     y_mapping = {'yes': 1,
                  'no': 0}
 
@@ -27,21 +25,15 @@ class DfBankAdditional(pd.DataFrame):
         values with `1`.
 
         This behavior can be modified by changing the class attributes:
-            `pdays_mapping`
             `y_mapping`
             `poutcome_mapping`
             `days_of_week_mapping`
         """
-        self.process_pdays()
         self.process_y()
         self.process_poutcome()
         self.process_day_of_week()
 
         self._validate_all()
-
-    def process_pdays(self):
-        for k, v in self.pdays_mapping.items():
-            self['pdays'].replace(k, v, inplace=True)
 
     def process_day_of_week(self):
         for k, v in self.day_of_week_mapping.items():
@@ -60,7 +52,6 @@ class DfBankAdditional(pd.DataFrame):
         Checks that our assumptions about the structure of the data are correct. Raises and AssertionError if an
         unexpected datatype or value is found.
         """
-        self._validate_pdays()
         self._validate_y()
         self._validate_poutcome()
         self._validate_day_of_week()
@@ -73,6 +64,3 @@ class DfBankAdditional(pd.DataFrame):
 
     def _validate_y(self):
         assert self['y'].isin(self.y_mapping.values()).all()
-
-    def _validate_pdays(self):
-        assert self['pdays'].apply(lambda x: isinstance(x, float)).all()
