@@ -16,6 +16,26 @@ class DfBankAdditional(pd.DataFrame):
     poutcome_mapping = {'nonexistent': np.NaN,
                         'failure': 0,
                         'success': 1}
+    
+    job_mapping = {'housemaid':'lower income',
+                   'services':'lower income',
+                   'blue-collar':'lower income',
+                   'unknown':'lower income',
+                   'self-employed':'lower income',
+                   'retired':'no income',
+                   'student':'no income',
+                   'admin':'higher income',
+                   'technician':'higher income',
+                   'management':'higher income',
+                   'entrepreneur':'higher income'
+                   }
+    education_mapping = {
+        'basic.4y':'Dropout',
+        'basic.4y':'Dropout',
+        'basic.4y':'Dropout',
+        'basic.4y':'Dropout',
+    }
+
     day_of_week_mapping = dict(zip(map(str.lower, calendar.day_abbr), range(7)))
     month_mapping = dict(zip(map(str.lower, calendar.month_abbr), range(0, 13)))
 
@@ -33,6 +53,8 @@ class DfBankAdditional(pd.DataFrame):
         self.process_poutcome()
         self.process_day_of_week()
         self.process_month()
+        self.process_job()
+        self.process_education()
 
         self._validate_all()
 
@@ -47,9 +69,17 @@ class DfBankAdditional(pd.DataFrame):
     def process_poutcome(self):
         for k, v in self.poutcome_mapping.items():
             self['poutcome'].replace(k, v, inplace=True)
+    
+     def process_job(self):
+            for k, v in self.job_mapping.items():
+            self['job'].replace(k, v, inplace=True)
 
     def process_y(self):
         for k, v in self.y_mapping.items():
+            self['y'].replace(k, v, inplace=True)
+    
+    def process_education(self):
+        for k, v in self.education_mapping.items():
             self['y'].replace(k, v, inplace=True)
 
     def _validate_all(self):
