@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import calendar
+from typing import Union, Iterable
 
 
 class DfBankAdditional(pd.DataFrame):
@@ -12,7 +13,6 @@ class DfBankAdditional(pd.DataFrame):
     """
     y_mapping = {'yes': 1,
                  'no': 0}
-
     poutcome_mapping = {'nonexistent': np.NaN,
                         'failure': 0,
                         'success': 1}
@@ -37,6 +37,7 @@ class DfBankAdditional(pd.DataFrame):
     }
 
     day_of_week_mapping = dict(zip(map(str.lower, calendar.day_abbr), range(7)))
+    month_mapping = dict(zip(map(str.lower, calendar.month_abbr), range(0, 13)))
 
     def process_all(self):
         """
@@ -51,10 +52,15 @@ class DfBankAdditional(pd.DataFrame):
         self.process_y()
         self.process_poutcome()
         self.process_day_of_week()
+        self.process_month()
         self.process_job()
         self.process_education()
 
         self._validate_all()
+
+    def process_month(self):
+        for k, v in self.month_mapping.items():
+            self['month'].replace(k, v, inplace=True)
 
     def process_day_of_week(self):
         for k, v in self.day_of_week_mapping.items():
@@ -84,6 +90,10 @@ class DfBankAdditional(pd.DataFrame):
         self._validate_y()
         self._validate_poutcome()
         self._validate_day_of_week()
+        self._validate_month()
+
+    def _validate_month(self):
+        assert self['month'].isin(self.month_mapping.values()).all()
 
     def _validate_day_of_week(self):
         assert self['day_of_week'].isin(self.day_of_week_mapping.values()).all()
@@ -93,3 +103,39 @@ class DfBankAdditional(pd.DataFrame):
 
     def _validate_y(self):
         assert self['y'].isin(self.y_mapping.values()).all()
+
+
+def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
+    """
+    Returns a DataFrame, Series, or Iterable with integers converted to the appropriate abbreviated day of the week.
+    0 returns an empty string. Values outside [0 6] will raise an `IndexError`
+
+    :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 6
+    """
+    def func(x):
+        return calendar.day_abbr[x]
+    result = _apply(df, func)
+    return result
+
+
+def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
+    """
+    Returns a DataFrame, Series, or Iterable with integers converted to the appropriate abbreviated month. 0 returns
+    an empty string. Values outside [0 12] will raise an `IndexError`
+
+    :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 12
+    """
+    def func(x):
+        return calendar.month_abbr[x]
+    result = _apply(df, func)
+    return result
+
+
+def _apply(df, func):
+    if isinstance(df, pd.DataFrame) or isinstance(df, pd.Series):
+        result = df.apply(func)
+    elif isinstance(df, Iterable):
+        result = map(func, df)
+    else:
+        raise TypeError(f"_apply takes Datframe, Series, or Iterables, not {type(df)}")
+    return list(result)
