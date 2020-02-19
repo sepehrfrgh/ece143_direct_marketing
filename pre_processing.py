@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import calendar
-from typing import Union, Iterable
+from typing import Union, Iterable, Callable, List
 
 
 class DfBankAdditional(pd.DataFrame):
@@ -11,6 +11,12 @@ class DfBankAdditional(pd.DataFrame):
 
     Pass a pandas.DataFrame to the constructor to get started
     """
+    NO_INCOME = 'no income'
+    LOWER_INCOME = 'lower income'
+    HIGHER_INCOME = 'higher income'
+
+    DROPOUT = 'Dropout'
+
     mappings = {
         'y': {
             'yes': 1,
@@ -22,23 +28,29 @@ class DfBankAdditional(pd.DataFrame):
             'success': 1
         },
         'job': {
-            'housemaid': 'lower income',
-            'services': 'lower income',
-            'blue-collar': 'lower income',
-            'unknown': 'lower income',
-            'self-employed': 'lower income',
-            'retired': 'no income',
-            'student': 'no income',
-            'admin': 'higher income',
-            'technician': 'higher income',
-            'management': 'higher income',
-            'entrepreneur': 'higher income'
+            'housemaid': LOWER_INCOME,
+            'services': LOWER_INCOME,
+            'blue-collar': LOWER_INCOME,
+            'self-employed': LOWER_INCOME,
+            'retired': NO_INCOME,
+            'student': NO_INCOME,
+            'unemployed': NO_INCOME,
+            'admin': HIGHER_INCOME,
+            'admin.': HIGHER_INCOME,
+            'technician': HIGHER_INCOME,
+            'management': HIGHER_INCOME,
+            'entrepreneur': HIGHER_INCOME,
+            'unknown': 'unknown',
         },
         'education': {
-            'basic.4y': 'Dropout',
-            'high.school': 'Dropout',
-            'basic.6y': 'Dropout',
-            'basic.9y': 'Dropout',
+            'basic.4y': DROPOUT,
+            'high.school': DROPOUT,
+            'basic.6y': DROPOUT,
+            'basic.9y': DROPOUT,
+            'professional.course': 'professional.course',
+            'unknown': 'unknown',
+            'university.degree': 'university.degree',
+            'illiterate': 'illiterate',
         },
         'day_of_week': dict(zip(map(str.lower, calendar.day_abbr), range(7))),
         'month': dict(zip(map(str.lower, calendar.month_abbr), range(0, 13))),
@@ -51,12 +63,9 @@ class DfBankAdditional(pd.DataFrame):
 
         This behavior can be modified by changing the class attribute `mappings`
         """
-        self.re_map_column('y')
-        self.re_map_column('poutcome')
-        self.re_map_column('day_of_week')
-        self.re_map_column('month')
-        self.re_map_column('job')
-        self.re_map_column('education')
+        for c in self.keys():
+            if c in self.mappings.keys():
+                self.re_map_column(c)
 
         self._validate_all()
 
@@ -69,13 +78,16 @@ class DfBankAdditional(pd.DataFrame):
         Checks that our assumptions about the structure of the data are correct. Raises and AssertionError if an
         unexpected datatype or value is found.
         """
-        self._validate('month')
-        self._validate('poutcome')
-        self._validate('day_of_week')
-        self._validate('month')
+        for c in self.keys():
+            if c in self.mappings.keys():
+                self._validate(c)
 
-    def _validate(self, column: str):
-        assert self[column].isin(self.mappings[column].values()).all()
+    def _validate(self, column):
+        if not self[column].isin(self.mappings[column].values()).all():
+            map_value_set = set(self.mappings[column].values())
+            self_value_set = set(self[column].values)
+            missing_values = self_value_set.difference(map_value_set)
+            raise ValueError(f'{column} contains values not found in mapping: {missing_values}')
 
 
 def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
@@ -85,7 +97,6 @@ def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 6
     """
-
     def func(x):
         return calendar.day_abbr[x]
 
@@ -100,7 +111,6 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 12
     """
-
     def func(x):
         return calendar.month_abbr[x]
 
@@ -108,20 +118,27 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
     return result
 
 
-def _apply(df, func):
-    if isinstance(df, pd.DataFrame) or isinstance(df, pd.Series):
-        result = df.apply(func)
-    elif isinstance(df, Iterable):
-        result = map(func, df)
+def _apply(x: Union[pd.DataFrame, pd.Series, Iterable], func: Callable) -> List:
+    """
+    Iteratively applies function `func` to `x`.
+
+    :param x:  A pandas DataFrame, Series or an iterable
+    :param func: a callable to be applied to x without arguments
+    :return: a list containing the results
+    """
+    if isinstance(x, pd.DataFrame) or isinstance(x, pd.Series):
+        result = x.apply(func)
+    elif isinstance(x, Iterable):
+        result = map(func, x)
     else:
-        raise TypeError(f"_apply takes Dataframe, Series, or Iterables, not {type(df)}")
+        raise TypeError(f"_apply takes Dataframe, Series, or Iterables, not {type(x)}")
     return list(result)
 
 
 def load_data(path: str) -> DfBankAdditional:
     """
-
-    :param path:
-    :return:
+    Loads the csv located at `path`
+    :param path: a string path to the bank-additional-full.csv file
+    :return: a DfBankAdditional
     """
     return DfBankAdditional(pd.read_csv(path, sep=';'))
