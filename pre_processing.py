@@ -11,98 +11,71 @@ class DfBankAdditional(pd.DataFrame):
 
     Pass a pandas.DataFrame to the constructor to get started
     """
-    y_mapping = {'yes': 1,
-                 'no': 0}
-    poutcome_mapping = {'nonexistent': np.NaN,
-                        'failure': 0,
-                        'success': 1}
-    
-    job_mapping = {'housemaid':'lower income',
-                   'services':'lower income',
-                   'blue-collar':'lower income',
-                   'unknown':'lower income',
-                   'self-employed':'lower income',
-                   'retired':'no income',
-                   'student':'no income',
-                   'admin':'higher income',
-                   'technician':'higher income',
-                   'management':'higher income',
-                   'entrepreneur':'higher income'
-                   }
-    education_mapping = {
-        'basic.4y':'Dropout',
-        'basic.4y':'Dropout',
-        'basic.4y':'Dropout',
-        'basic.4y':'Dropout',
+    mappings = {
+        'y': {
+            'yes': 1,
+            'no': 0
+        },
+        'poutcome': {
+            'nonexistent': np.NaN,
+            'failure': 0,
+            'success': 1
+        },
+        'job': {
+            'housemaid': 'lower income',
+            'services': 'lower income',
+            'blue-collar': 'lower income',
+            'unknown': 'lower income',
+            'self-employed': 'lower income',
+            'retired': 'no income',
+            'student': 'no income',
+            'admin': 'higher income',
+            'technician': 'higher income',
+            'management': 'higher income',
+            'entrepreneur': 'higher income'
+        },
+        'education': {
+            'basic.4y': 'Dropout',
+            'high.school': 'Dropout',
+            'basic.6y': 'Dropout',
+            'basic.9y': 'Dropout',
+        },
+        'day_of_week': dict(zip(map(str.lower, calendar.day_abbr), range(7))),
+        'month': dict(zip(map(str.lower, calendar.month_abbr), range(0, 13))),
     }
-
-    day_of_week_mapping = dict(zip(map(str.lower, calendar.day_abbr), range(7)))
-    month_mapping = dict(zip(map(str.lower, calendar.month_abbr), range(0, 13)))
 
     def process_all(self):
         """
         The dataframe is modified in-place, replacing unknown values with np.NaN, false values with `0`, and true
         values with `1`.
 
-        This behavior can be modified by changing the class attributes:
-            `y_mapping`
-            `poutcome_mapping`
-            `days_of_week_mapping`
+        This behavior can be modified by changing the class attribute `mappings`
         """
-        self.process_y()
-        self.process_poutcome()
-        self.process_day_of_week()
-        self.process_month()
-        self.process_job()
-        self.process_education()
+        self.re_map_column('y')
+        self.re_map_column('poutcome')
+        self.re_map_column('day_of_week')
+        self.re_map_column('month')
+        self.re_map_column('job')
+        self.re_map_column('education')
 
         self._validate_all()
 
-    def process_month(self):
-        for k, v in self.month_mapping.items():
-            self['month'].replace(k, v, inplace=True)
-
-    def process_day_of_week(self):
-        for k, v in self.day_of_week_mapping.items():
-            self['day_of_week'].replace(k, v, inplace=True)
-
-    def process_poutcome(self):
-        for k, v in self.poutcome_mapping.items():
-            self['poutcome'].replace(k, v, inplace=True)
-    
-     def process_job(self):
-            for k, v in self.job_mapping.items():
-            self['job'].replace(k, v, inplace=True)
-
-    def process_y(self):
-        for k, v in self.y_mapping.items():
-            self['y'].replace(k, v, inplace=True)
-    
-    def process_education(self):
-        for k, v in self.education_mapping.items():
-            self['y'].replace(k, v, inplace=True)
+    def re_map_column(self, column: str):
+        for k, v in self.mappings[column].items():
+            self[column].replace(k, v, inplace=True)
 
     def _validate_all(self):
         """
         Checks that our assumptions about the structure of the data are correct. Raises and AssertionError if an
         unexpected datatype or value is found.
         """
-        self._validate_y()
-        self._validate_poutcome()
-        self._validate_day_of_week()
-        self._validate_month()
+        self._validate('month')
+        self._validate('poutcome')
+        self._validate('day_of_week')
+        self._validate('month')
 
-    def _validate_month(self):
-        assert self['month'].isin(self.month_mapping.values()).all()
-
-    def _validate_day_of_week(self):
-        assert self['day_of_week'].isin(self.day_of_week_mapping.values()).all()
-
-    def _validate_poutcome(self):
-        assert self['poutcome'].isin(self.poutcome_mapping.values()).all()
-
-    def _validate_y(self):
-        assert self['y'].isin(self.y_mapping.values()).all()
+    def _validate(self, column: str):
+        assert self[column].isin(self.mappings[column].values()).all()
 
 
 def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
@@ -112,8 +85,10 @@ def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 6
     """
+
     def func(x):
         return calendar.day_abbr[x]
+
     result = _apply(df, func)
     return result
 
@@ -125,8 +100,10 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 12
     """
+
     def func(x):
         return calendar.month_abbr[x]
+
     result = _apply(df, func)
     return result
 
@@ -137,5 +114,5 @@ def _apply(df, func):
     elif isinstance(df, Iterable):
         result = map(func, df)
     else:
-        raise TypeError(f"_apply takes Datframe, Series, or Iterables, not {type(df)}")
+        raise TypeError(f"_apply takes Dataframe, Series, or Iterables, not {type(df)}")
     return list(result)
