@@ -116,3 +116,12 @@ def _apply(df, func):
     else:
         raise TypeError(f"_apply takes Dataframe, Series, or Iterables, not {type(df)}")
     return list(result)
+
+
+def load_data(path: str) -> DfBankAdditional:
+    """
+
+    :param path:
+    :return:
+    """
+    return DfBankAdditional(pd.read_csv(path, sep=';'))
