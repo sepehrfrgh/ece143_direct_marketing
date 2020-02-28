@@ -17,6 +17,11 @@ class DfBankAdditional(pd.DataFrame):
     DROPOUT = 'Dropout'
 
     mappings = {
+        marital_status_mapping = {'single'  : 'single',
+        'married' : 'married',
+        'divorced': 'divorced',
+        'unknown' : np.NaN}
+    
         'y': {
             'yes': 1,
             'no': 0
