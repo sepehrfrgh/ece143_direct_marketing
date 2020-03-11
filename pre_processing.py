@@ -3,7 +3,7 @@ import numpy as np
 import calendar
 
 
-class DfBankAdditional(pd.DataFrame):
+class DfBankAdditional:
     '''
     To be used with the bank-additional dataset from:
     https://archive.ics.uci.edu/ml/datasets/Bank+Marketing#
@@ -84,6 +84,9 @@ class DfBankAdditional(pd.DataFrame):
         'month': dict(zip(map(str.lower, calendar.month_abbr), range(0, 13))),
     }
 
+    def __init__(self, filepath):
+        self.df = pd.DataFrame(filepath)
+
     def process_all(self):
         '''
         The dataframe is modified in-place, replacing unknown values with np.NaN, false values with `0`, and true
@@ -91,7 +94,7 @@ class DfBankAdditional(pd.DataFrame):
 
         This behavior can be modified by changing the class attribute `mappings`
         '''
-        for c in self.keys():
+        for c in self.df.keys():
             if c in self.mappings.keys():
                 self.re_map_column(c)
 
@@ -105,14 +108,14 @@ class DfBankAdditional(pd.DataFrame):
         '''
         assert isinstance(column, str)
         for k, v in self.mappings[column].items():
-            self[column].replace(k, v, inplace=True)
+            self.df[column].replace(k, v, inplace=True)
 
     def _validate_all(self):
         '''
         Checks that our assumptions about the structure of the data are correct. Raises and AssertionError if an
         unexpected datatype or value is found.
         '''
-        for c in self.keys():
+        for c in self.df.keys():
             if c in self.mappings.keys():
                 self._validate(c)
 
@@ -123,9 +126,9 @@ class DfBankAdditional(pd.DataFrame):
         :param column: The DataFrame column to validate
         '''
         assert isinstance(column, str)
-        if not self[column].isin(self.mappings[column].values()).all():
+        if not self.df[column].isin(self.mappings[column].values()).all():
             map_value_set = set(self.mappings[column].values())
-            self_value_set = set(self[column].values)
+            self_value_set = set(self.df[column].values)
             missing_values = self_value_set.difference(map_value_set)
             raise ValueError(f'{column} contains values not found in mapping: {missing_values}')
 
