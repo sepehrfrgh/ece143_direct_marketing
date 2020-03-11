@@ -24,6 +24,7 @@ Our work is implemented in Python, here are the dependencies.
 git clone https://github.com/sepehrfrgh/ece143_direct_marketing.git
 cd ece143_direct_marketing
 ```
+
 ## Overview
 We provide:
 - Downloaded data from uci dataset
@@ -36,21 +37,26 @@ The data in `./dataset/` is already downloaded from uci dataset. the`.txt` file 
 
 You are highly recommended to use our downloaded data because the origin dataset has other versions.
 
-You can also downloaded the data youself from https://archive.ics.uci.edu/ml/datasets/Bank+Marketing and put them in `./data/`
+You can also downloaded the data youself from https://archive.ics.uci.edu/ml/datasets/Bank+Marketing and put them in `./dataset/`
 
 
 ### Jupyter Notebook
-We provide the notebook version of of code in xxx.py
+We provide the notebook version of of code in xxx.ipynb
 
-You can also run the following code attached.
+-xxx.ipynb: 
 
-```
-(need to provide)
-```
 ### Data Analysis
+
 ```shell
+#to analyse features, such as age, month, etc.
 python xxx.py
 ```
+
+-pre_processing.py : dataframe,mapping,load function
+-analysis.py : age,month analysis
+-feature_importance.py : use random forest to show relations between features
+
+### Result 
 The plots of data analysis will be saved in `./result_plots/`.
 
 
