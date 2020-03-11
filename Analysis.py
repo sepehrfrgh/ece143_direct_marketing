@@ -6,7 +6,7 @@ from typing import Union, Iterable, Callable, List
 import pre_processing as pp
 
 
-class TimeAnalysis:
+class Analysis:
     
     def __init__(self, csv_path):
         '''
@@ -135,7 +135,7 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
 
 
 def _apply(x: Union[pd.DataFrame, pd.Series, Iterable], func: Callable) -> List:
-   '''
+    '''
     Iteratively applies function `func` to `x`.
 
     :param x:  A pandas DataFrame, Series or an iterable
