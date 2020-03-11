@@ -14,6 +14,7 @@ class DfBankAdditional(pd.DataFrame):
     LOWER_INCOME = 'lower income'
     HIGHER_INCOME = 'higher income'
 
+    
     DROPOUT = 'Dropout'
     age_dict = {}
     for i in range(15, 99):
