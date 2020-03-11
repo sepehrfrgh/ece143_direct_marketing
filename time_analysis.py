@@ -18,8 +18,9 @@ class TimeAnalysis:
         :param csv_path: a string that contains the path to the dataframe.
         '''
         assert isinstance(csv_path, str)
-        self.df = pp.load_data(csv_path)
-        self.df.process_all()
+        data = pp.load_data(csv_path)
+        data.process_all()
+        self.df = data.df
 
     def get_probabilities(self, column) -> pd.DataFrame:
         '''
@@ -135,7 +136,7 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
 
 
 def _apply(x: Union[pd.DataFrame, pd.Series, Iterable], func: Callable) -> List:
-   '''
+    '''
     Iteratively applies function `func` to `x`.
 
     :param x:  A pandas DataFrame, Series or an iterable
