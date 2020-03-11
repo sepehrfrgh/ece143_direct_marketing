@@ -1,11 +1,13 @@
 import calendar
 import pandas as pd
+import numpy as np
 from typing import Union, Iterable, Callable, List
 
 import pre_processing as pp
 
 
 class TimeAnalysis:
+    
     def __init__(self, csv_path):
         self.df = pp.load_data(csv_path)
         self.df.process_all()
@@ -29,7 +31,33 @@ class TimeAnalysis:
     def get_yes_no_count(self, column) -> pd.DataFrame:
         assert column in self.df.keys()
         return self.df[column].groupby
+    
+    def get_column(self, column) -> pd.DataFrame:
+        assert column in self.df.keys()
+        return self.df[column]
+    
+    
+    
+def map_age(csv_path):
+    labels = ['(16, 20)','(21, 30)','(31, 40)','(41, 50)','(51, 60)','(61, 70)','(71, 80)','(81, 90)','(91, 100)']
+    dataset_con = pd.DataFrame() 
+    dataset_raw = pp.load_data(csv_path)
+    dataset_con['y'] = dataset_raw['y']
+    dataset_con['age'] = dataset_raw['age']
+    dataset_con['y']= np.round(dataset_con['age'])
+    dataset_con['interval'] = dataset_con['y'].map(dataset_raw.age_dict)
+    counts = []
 
+    for i in labels:
+        counts.append(dataset_raw.loc[dataset_con['interval'] == i]['y'].value_counts())
+    
+    return counts, labels
+
+def get_age_prob_success(data):
+    result = []
+    for item in data:
+        result.append(item[1]/(item[1]+item[0])* 100)
+    return result
 
 def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
     """
