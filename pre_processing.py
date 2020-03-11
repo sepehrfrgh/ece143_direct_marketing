@@ -15,13 +15,34 @@ class DfBankAdditional(pd.DataFrame):
     HIGHER_INCOME = 'higher income'
 
     DROPOUT = 'Dropout'
-
+    age_dict = {}
+    for i in range(15, 99):
+        if i >= 15 and i <= 20:
+            age_dict[i] = '(16, 20)'
+        elif i >= 21 and i <= 30:
+            age_dict[i] = '(21, 30)'
+        elif i >= 31 and i <= 40:
+            age_dict[i] = '(31, 40)'
+        elif i >= 41 and i <= 50:
+            age_dict[i] = '(41, 50)'
+        elif i >= 51 and i <= 60:
+            age_dict[i] = '(51, 60)'
+        elif i >= 61 and i <= 70:
+            age_dict[i] = '(61, 70)'
+        elif i >= 71 and i <= 80:
+            age_dict[i] = '(71, 80)'
+        elif i >= 81 and i <= 90:
+            age_dict[i] = '(81, 90)'
+        else:
+            age_dict[i] = '(91, 100)'
     mappings = {
-        marital_status_mapping = {'single'  : 'single',
+        'marital_status_mapping' : {'single'  : 'single',
         'married' : 'married',
         'divorced': 'divorced',
-        'unknown' : np.NaN}
-    
+        'unknown' : np.NaN},
+        
+        'age1' : age_dict,
+      
         'y': {
             'yes': 1,
             'no': 0
