@@ -37,7 +37,7 @@ class DfBankAdditional(pd.DataFrame):
         else:
             age_dict[i] = '(91, 100)'
     mappings = {
-<<<<<<< HEAD
+
         'marital_status_mapping' : {'single'  : 'single',
         'married' : 'married',
         'divorced': 'divorced',
@@ -45,14 +45,7 @@ class DfBankAdditional(pd.DataFrame):
         
         'age1' : age_dict,
       
-=======
-        'marital_status_mapping': {
-            'single': 'single',
-            'married': 'married',
-            'divorced': 'divorced',
-            'unknown': np.NaN
-        },
->>>>>>> a173a99a514f2ef580e9a18f0f7efcc45db3395d
+
         'y': {
             'yes': 1,
             'no': 0
