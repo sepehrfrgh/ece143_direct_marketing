@@ -6,7 +6,7 @@ from typing import Union, Iterable, Callable, List
 import pre_processing as pp
 
 
-class TimeAnalysis:
+class Analysis:
     
     def __init__(self, csv_path):
         '''
