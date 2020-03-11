@@ -4,12 +4,12 @@ import calendar
 
 
 class DfBankAdditional(pd.DataFrame):
-    """
+    '''
     To be used with the bank-additional dataset from:
     https://archive.ics.uci.edu/ml/datasets/Bank+Marketing#
 
     Pass a pandas.DataFrame to the constructor to get started
-    """
+    '''
     NO_INCOME = 'no income'
     LOWER_INCOME = 'lower income'
     HIGHER_INCOME = 'higher income'
@@ -37,6 +37,7 @@ class DfBankAdditional(pd.DataFrame):
         else:
             age_dict[i] = '(91, 100)'
     mappings = {
+<<<<<<< HEAD
         'marital_status_mapping' : {'single'  : 'single',
         'married' : 'married',
         'divorced': 'divorced',
@@ -44,6 +45,14 @@ class DfBankAdditional(pd.DataFrame):
         
         'age1' : age_dict,
       
+=======
+        'marital_status_mapping': {
+            'single': 'single',
+            'married': 'married',
+            'divorced': 'divorced',
+            'unknown': np.NaN
+        },
+>>>>>>> a173a99a514f2ef580e9a18f0f7efcc45db3395d
         'y': {
             'yes': 1,
             'no': 0
@@ -83,12 +92,12 @@ class DfBankAdditional(pd.DataFrame):
     }
 
     def process_all(self):
-        """
+        '''
         The dataframe is modified in-place, replacing unknown values with np.NaN, false values with `0`, and true
         values with `1`.
 
         This behavior can be modified by changing the class attribute `mappings`
-        """
+        '''
         for c in self.keys():
             if c in self.mappings.keys():
                 self.re_map_column(c)
@@ -96,19 +105,31 @@ class DfBankAdditional(pd.DataFrame):
         self._validate_all()
 
     def re_map_column(self, column: str):
+        '''
+        Applies the mapping in the `self.mappings` dict to the column name in `column`
+        
+        :param column: name of the `pd.DataFrame` column to re-map
+        '''
+        assert isinstance(column, str)
         for k, v in self.mappings[column].items():
             self[column].replace(k, v, inplace=True)
 
     def _validate_all(self):
-        """
+        '''
         Checks that our assumptions about the structure of the data are correct. Raises and AssertionError if an
         unexpected datatype or value is found.
-        """
+        '''
         for c in self.keys():
             if c in self.mappings.keys():
                 self._validate(c)
 
-    def _validate(self, column):
+    def _validate(self, column: str):
+        '''
+        Checks that all data entries in `column` can be found in the `self.mappings` dict
+
+        :param column: The DataFrame column to validate
+        '''
+        assert isinstance(column, str)
         if not self[column].isin(self.mappings[column].values()).all():
             map_value_set = set(self.mappings[column].values())
             self_value_set = set(self[column].values)
@@ -117,9 +138,9 @@ class DfBankAdditional(pd.DataFrame):
 
 
 def load_data(path: str) -> DfBankAdditional:
-    """
+    '''
     Loads the csv located at `path`
     :param path: a string path to the bank-additional-full.csv file
     :return: a DfBankAdditional
-    """
+    '''
     return DfBankAdditional(pd.read_csv(path, sep=';'))
