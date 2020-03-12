@@ -6,7 +6,14 @@ This work addresses the problem of predicting which features will decide a good 
     <img src='together.png' height="500" >
 </p>
 
-## Dependencies
+## Installation
+
+```shell
+git clone https://github.com/sepehrfrgh/ece143_direct_marketing.git
+cd ece143_direct_marketing
+```
+
+### Dependencies
 
 - Python>=3.6
 - pandas
@@ -15,11 +22,6 @@ This work addresses the problem of predicting which features will decide a good 
 - scikit-learn
 - jupyter
 
-```shell
-# Download this code
-git clone https://github.com/sepehrfrgh/ece143_direct_marketing.git
-cd ece143_direct_marketing
-```
 
 ## Overview
 Repository contains:
