@@ -54,3 +54,6 @@ Visualizations were produced in `analysis-notebook.ipynb`
 - pre_processing.py : Data loading and processing
 - analysis.py : Analysis tools
 - config.py : Configuration file where the path to the data files can be configured.
+
+### License
+[license.md](license.md) to learn more details
