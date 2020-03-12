@@ -1,6 +1,9 @@
 # ECE-143-Project-Group-17
 
-This work addresses the problem of predicting which features will decide a good client
+How do telemarketers decide who to target with their calls?
+This project addresses this question with the analysis of the data
+from a direct marketing campaign undertaken by a Portuguese bank.
+
 <br>
 <p align="center">
     <img src='together.png' height="500" >
