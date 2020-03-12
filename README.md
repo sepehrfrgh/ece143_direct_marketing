@@ -8,9 +8,10 @@ This work addresses the problem of predicting which features will decide a good 
 
 ## Installation
 
-```shell
+```shell script
 git clone https://github.com/sepehrfrgh/ece143_direct_marketing.git
 cd ece143_direct_marketing
+pip install -r requirements.txt
 ```
 
 ### Dependencies
@@ -22,6 +23,11 @@ cd ece143_direct_marketing
 - scikit-learn
 - jupyter
 
+## Usage
+
+```shell script
+jupyter notebook analysis-notebook.ipynb 
+```
 
 ## Overview
 Repository contains:
@@ -36,18 +42,13 @@ The original data can be found at https://archive.ics.uci.edu/ml/datasets/Bank+M
 
 
 ### Jupyter Notebook
-Get started with the Jupyter notebook `analysis-notebook.ipynb`
+
+Visualizations were produced in `analysis-notebook.ipynb`
 
 ### Data Analysis
 
-```shell
-#to analyse features, such as age, month, etc.
-python xxx.py
-```
-
--pre_processing.py : dataframe,mapping,load function
--analysis.py : age,month analysis
--feature_importance.py : use random forest to show relations between features
+-pre_processing.py : Data loading and processing
+-analysis.py : Analysis tools
 
 ### Result 
 The plots of data analysis will be saved in `./result_plots/`.
