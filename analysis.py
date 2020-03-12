@@ -1,5 +1,5 @@
 import calendar
-from typing import Union, Iterable, Callable, List
+from typing import Union, Iterable, Callable, List, Tuple
 
 import pandas as pd
 import numpy as np
@@ -10,7 +10,7 @@ import pre_processing as pp
 
 
 class Analysis:
-    
+
     def __init__(self, csv_path):
         '''
         Loads the Dataframe from the csv_path.
@@ -18,6 +18,7 @@ class Analysis:
         After loading the entries in the various columns of the dataframe are processed and validated.
         Processing involves replacing unknown values with np.NaN.
         Validation checks if the column values in the data frame are compliant with the mappings of the data provided.
+
         :param csv_path: a string that contains the path to the dataframe.
         '''
         assert isinstance(csv_path, str)
@@ -28,76 +29,84 @@ class Analysis:
     def get_probabilities(self, column) -> pd.DataFrame:
         '''
         Returns the probability of a customer saying yes based on the column attribute passed
+
         :param column: column index for which we want to compute probability
         '''
-        
+
         assert column in self.df.keys()
         return self.df[[column, 'y']].groupby(by=column).mean().reset_index()
 
     def get_success_count(self, column) -> pd.DataFrame:
         '''
         Returns the number of a customers who say yes based on the column attribute passed
+
         :param column: column index for which we want to compute success count(number of yes)
         '''
-        
+
         assert column in self.df.keys()
         return self.df[[column, 'y']].groupby(column)['y'].sum().reset_index()
 
     def get_count(self, column) -> pd.DataFrame:
         '''
         Returns the number total number of a customers who have been contacted
+
         :param column: column index for which we want to compute total count
         '''
-        
+
         assert column in self.df.keys()
         return self.df[[column, 'y']].groupby(column)['y'].count().reset_index()
 
     def get_yes_no_count(self, column) -> pd.DataFrame:
         '''
         Returns the number total number of a customers who said yes and total number of customers who said no
+
         :param column: column index for which we want to compute
         '''
         assert column in self.df.keys()
         return self.df[column].groupby
-    
+
     def get_column(self, column) -> pd.DataFrame:
         '''
         Returns a specific column from the dataframe
+
         :param column: column index which we want to be queried
         '''
-        
+
         assert column in self.df.keys()
         return self.df[column]
-        
+
     def percentage_of_population(self, column):
         '''
         Returns the number total number of a customers who have been contacted
+
         :param column: column index for which we want to compute probability
         '''
-    
+
         assert column in self.df.keys()
         total = self.df[column].count()
-        percentages = [np.around(i*100/total, 2) for i in self.df[column].value_counts()]
+        percentages = [np.around(i * 100 / total, 2) for i in self.df[column].value_counts()]
         return percentages
-    
-    
-    def map_age(self, csv_path):
+
+    def map_age(self) -> Tuple[List[int], List[str]]:
         '''
-        Returns the mapping of age in the dataset to age groups for instance a 17 year old will be mapped to (16-20) category
-        :param csv_path: a string that contains the path to the dataframe.
+        Returns the mapping of age in the dataset to age groups for instance a 17 year old will be mapped to (16-20)
+        category
+
+        :return: Counts and labels for each age group specified by labels.
         '''
-        labels = ['(16, 20)','(21, 30)','(31, 40)','(41, 50)','(51, 60)','(61, 70)','(71, 80)','(81, 90)','(91, 100)']
+        labels = ['(16, 20)', '(21, 30)', '(31, 40)', '(41, 50)', '(51, 60)', '(61, 70)', '(71, 80)', '(81, 90)',
+                  '(91, 100)']
         dataset_con = pd.DataFrame()
-        
+
         dataset_con['y'] = self.df['y']
         dataset_con['age'] = self.df['age']
-        dataset_con['y']= np.round(dataset_con['age'])
+        dataset_con['y'] = np.round(dataset_con['age'])
         dataset_con['interval'] = dataset_con['y'].map(self.processing.age_dict)
         counts = []
 
         for i in labels:
             counts.append(self.df.loc[dataset_con['interval'] == i]['y'].value_counts())
-    
+
         return counts, labels
 
     def get_age_prob_success(self, data):
@@ -107,22 +116,31 @@ class Analysis:
         '''
         result = []
         for item in data:
-            result.append(item[1]/(item[1]+item[0])* 100)
+            result.append(item[1] / (item[1] + item[0]) * 100)
         return result
 
     @property
-    def column_list(self):
+    def column_list(self) -> List[str]:
+        '''
+        :return: The columns of `self.df` as a list
+        '''
         return self.df.columns.tolist()
 
 
 class MaritalAnalysis(Analysis):
+    '''
+    Filters unknown marital status types from `self.df`
+    '''
     def __init__(self, csv_path):
         super(MaritalAnalysis, self).__init__(csv_path)
         self.df = self.df.loc[self.df['marital'] != 'unknown', ['marital', 'y']]
 
 
 class FeatureAnalysis(Analysis):
-    age_bin_width = 12
+    '''
+    Exposes DataFrames with binned ages `self.df_binned` and encoded labels `self.df_encoded`
+    '''
+    age_bin_width = 12  # years
     features = ['age', 'job', 'marital', 'education', 'housing', 'loan', 'contact', 'month', 'y']
 
     def __init__(self, csv_path):
@@ -133,17 +151,17 @@ class FeatureAnalysis(Analysis):
         self.df_binned['age'] = pd.cut(self.df['age'], self.age_bin_width)
         self.df_encoded = self.df.apply(LabelEncoder().fit_transform)
 
-    def get_feature_importance(self):
+    def get_feature_importance(self) -> pd.DataFrame:
+        '''
+        Generates feature weights using random forest
+        
+        :return: A DataFrame with feature weights 
+        '''
         clf = RandomForestClassifier()
         clf.fit(self.df_encoded.drop('y', axis=1), self.df_encoded['y'])
         importance = pd.DataFrame(clf.feature_importances_, index=self.df_encoded.drop('y', axis=1).columns,
                                   columns=["Importance"])
         return importance.sort_values(by='Importance', ascending=True)
-
-    @property
-    def one_hot_columns(self):
-        return self.df.columns.tolist().remove('y')
-
 
 
 def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
@@ -153,6 +171,7 @@ def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 6
    '''
+
     def func(x):
         return calendar.day_abbr[x]
 
@@ -167,6 +186,7 @@ def number_to_month(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.Da
 
     :param df: a `pandas.DataFrame` or `pandas.Series` object with integer values ranging from 0 to 12
     '''
+
     def func(x):
         return calendar.month_abbr[x]
 
