@@ -3,6 +3,9 @@
 
 # Python artifacts
 __pycache__/
+build/
+dist/
+*.egg-info/
 
 # Project files
-.ipynb_checkpoints
+.ipynb_checkpoints/

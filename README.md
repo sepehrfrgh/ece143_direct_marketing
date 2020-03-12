@@ -7,17 +7,13 @@ This work addresses the problem of predicting which features will decide a good 
 </p>
 
 ## Dependencies
-Our work is implemented in Python, here are the dependencies.
 
-- Python 3
+- Python>=3.6
 - pandas
 - matplotlib
 - seaborn
-- mpl_toolkits
-- sklearn
-- pre_processing
-- scipy
-- warnings
+- scikit-learn
+- jupyter
 
 ```shell
 # Download this code
@@ -26,24 +22,19 @@ cd ece143_direct_marketing
 ```
 
 ## Overview
-We provide:
-- Downloaded data from uci dataset
-- Code for data analysis
-- Jupyter notebook which shows all the visualizations
-- Pdf file of presentation
+Repository contains:
+- Downloaded data from the UCI Bank Marketing dataset
+- Data analysis code
+- Visualizations in Jupyter notebook
 
 ### Data
-The data in `./dataset/` is already downloaded from uci dataset. the`.txt` file is an introduction of our dataset.
+The UCI dataset can be found in the `./dataset/` directory. the`.txt` file is an introduction to the dataset.
 
-You are highly recommended to use our downloaded data because the origin dataset has other versions.
-
-You can also downloaded the data youself from https://archive.ics.uci.edu/ml/datasets/Bank+Marketing and put them in `./dataset/`
+The original data can be found at https://archive.ics.uci.edu/ml/datasets/Bank+Marketing `./dataset/`
 
 
 ### Jupyter Notebook
-We provide the notebook version of of code in xxx.ipynb
-
--xxx.ipynb: 
+Get started with the Jupyter notebook `analysis-notebook.ipynb`
 
 ### Data Analysis
 
