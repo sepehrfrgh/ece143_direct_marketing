@@ -9,6 +9,13 @@ from a direct marketing campaign undertaken by a Portuguese bank.
     <img src='together.png' height="500" >
 </p>
 
+## Directory Structure
+├── README.md                      - The top-level README for developers using this project.
+├── dataset                               - Contains the dataset used for this project.
+├── pre_processing.py             - Data Cleaning and Validation.
+├── analysis.py                         - Code for data analysis and feature importance using random forest.
+├── analysis-notebook.ipynb   - Visualizations of analysis.
+
 ## Installation
 
 ```shell script
