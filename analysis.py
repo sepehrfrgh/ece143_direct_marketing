@@ -1,7 +1,10 @@
 import calendar
+from typing import Union, Iterable, Callable, List
+
 import pandas as pd
 import numpy as np
-from typing import Union, Iterable, Callable, List
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 
 import pre_processing as pp
 
@@ -107,11 +110,40 @@ class Analysis:
             result.append(item[1]/(item[1]+item[0])* 100)
         return result
 
+    @property
+    def column_list(self):
+        return self.df.columns.tolist()
+
 
 class MaritalAnalysis(Analysis):
     def __init__(self, csv_path):
         super(MaritalAnalysis, self).__init__(csv_path)
         self.df = self.df.loc[self.df['marital'] != 'unknown', ['marital', 'y']]
+
+
+class FeatureAnalysis(Analysis):
+    age_bin_width = 12
+    features = ['age', 'job', 'marital', 'education', 'housing', 'loan', 'contact', 'month', 'y']
+
+    def __init__(self, csv_path):
+        super(FeatureAnalysis, self).__init__(csv_path)
+        self.df = self.df[self.features]
+
+        self.df_binned = self.df
+        self.df_binned['age'] = pd.cut(self.df['age'], self.age_bin_width)
+        self.df_encoded = self.df.apply(LabelEncoder().fit_transform)
+
+    def get_feature_importance(self):
+        clf = RandomForestClassifier()
+        clf.fit(self.df_encoded.drop('y', axis=1), self.df_encoded['y'])
+        importance = pd.DataFrame(clf.feature_importances_, index=self.df_encoded.drop('y', axis=1).columns,
+                                  columns=["Importance"])
+        return importance.sort_values(by='Importance', ascending=True)
+
+    @property
+    def one_hot_columns(self):
+        return self.df.columns.tolist().remove('y')
+
 
 
 def number_to_day_of_week(df: Union[pd.DataFrame, pd.Series, Iterable]) -> Union[pd.DataFrame, pd.Series, Iterable]:
