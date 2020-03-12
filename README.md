@@ -30,16 +30,17 @@ jupyter notebook analysis-notebook.ipynb
 ```
 
 ## Overview
+
 Repository contains:
 - Downloaded data from the UCI Bank Marketing dataset
 - Data analysis code
 - Visualizations in Jupyter notebook
 
 ### Data
+
 The UCI dataset can be found in the `./dataset/` directory. the`.txt` file is an introduction to the dataset.
 
 The original data can be found at https://archive.ics.uci.edu/ml/datasets/Bank+Marketing `./dataset/`
-
 
 ### Jupyter Notebook
 
@@ -47,12 +48,5 @@ Visualizations were produced in `analysis-notebook.ipynb`
 
 ### Data Analysis
 
--pre_processing.py : Data loading and processing
--analysis.py : Analysis tools
-
-### Result 
-The plots of data analysis will be saved in `./result_plots/`.
-
-
-
-
+- pre_processing.py : Data loading and processing
+- analysis.py : Analysis tools
