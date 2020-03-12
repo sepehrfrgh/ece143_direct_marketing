@@ -171,7 +171,6 @@ def show():
    label_x = ax.get_xticklabels()
    plt.setp(label_x , rotation = 90)
    plt.title('correlation coefficients',fontsize='large')
-   f.savefig('./result_plots/relation.jpg', dpi=100, bbox_inches='tight')
 
    # Using Random Forest to gain an insight on Feature Importance
    clf = RandomForestClassifier()
@@ -183,4 +182,3 @@ def show():
    importance.sort_values(by='Importance', ascending=True).plot(kind='barh', figsize=(5,len(importance)/2),edgecolor='black');
    plt.title('feature importance',fontsize='large')
    plt.xlim((0, 0.5))
-   plt.savefig('./result_plots/importance.jpg',figuresize=(18.5,10),dpi=100, bbox_inches='tight')
