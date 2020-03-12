@@ -65,8 +65,12 @@ test_raw = DfBankAdditional(pd.read_csv('dataset/bank-additional.csv',
                       engine='python', 
                       skiprows=1,
                       index_col=False))
+
 training_raw.process_all()
 test_raw.process_all()
+
+training_raw = training_raw.df
+test_raw = test_raw.df
 
 # Join Datasets
 dataset_raw = training_raw.append(test_raw)

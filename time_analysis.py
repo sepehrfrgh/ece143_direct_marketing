@@ -18,9 +18,9 @@ class TimeAnalysis:
         :param csv_path: a string that contains the path to the dataframe.
         '''
         assert isinstance(csv_path, str)
-        data = pp.load_data(csv_path)
-        data.process_all()
-        self.df = data.df
+        self.processing = pp.load_data(csv_path)
+        self.processing.process_all()
+        self.df = self.processing.df
 
     def get_probabilities(self, column) -> pd.DataFrame:
         '''
@@ -89,7 +89,7 @@ class TimeAnalysis:
         dataset_con['y'] = self.df['y']
         dataset_con['age'] = self.df['age']
         dataset_con['y']= np.round(dataset_con['age'])
-        dataset_con['interval'] = dataset_con['y'].map(self.df.age_dict)
+        dataset_con['interval'] = dataset_con['y'].map(self.processing.age_dict)
         counts = []
 
         for i in labels:
