@@ -10,11 +10,15 @@ from a direct marketing campaign undertaken by a Portuguese bank.
 </p>
 
 ## Directory Structure
-├── README.md                      - The top-level README for developers using this project.
-├── dataset                               - Contains the dataset used for this project.
-├── pre_processing.py             - Data Cleaning and Validation.
-├── analysis.py                         - Code for data analysis and feature importance using random forest.
-├── analysis-notebook.ipynb   - Visualizations of analysis.
+```
+├── dataset
+|   ├── bank-additional-full.csv
+|   ├── bank-additional-full.csv
+|   └── bank-additional.csv
+├── pre_processing.py
+├── analysis.py
+├── analysis-notebook.ipynb
+```
 
 ## Installation
 
@@ -63,4 +67,4 @@ Visualizations were produced in `analysis-notebook.ipynb`
 - config.py : Configuration file where the path to the data files can be configured.
 
 ### License
-[license.md](license.md) to learn more details
+[license.md](license.md) MIT License
